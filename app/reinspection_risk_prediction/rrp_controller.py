@@ -1,7 +1,9 @@
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 
-from rrp_service import RrpService
+from app.reinspection_risk_prediction.rrp_service import RrpService
+from app.dependencies import get_rrp_service, get_model_manager
 
 router = APIRouter(prefix="/rrp")
 
@@ -24,10 +26,10 @@ class RrpFeature(BaseModel):
 class RrpRequestBatchRequest(BaseModel):
     items: list[RrpFeature] = Field(..., description="예측을 위한 Feature 목록")
 
-@router.post("/")
-def get_reinspection_risk(features: RrpRequestBatchRequest):
-    return RrpService.predict_reinspection_risk(features)
+@router.post("/predict")
+def get_reinspection_risk(features: RrpRequestBatchRequest, service: Annotated[RrpService, Depends(get_rrp_service)]):
+    return service.predict_reinspection_risk(features)
     
 @router.post("/graph")
-def get_rrp_graph():
-    return RrpService.generate_rrp_graph()
+def get_rrp_graph(service: Annotated[RrpService, Depends(get_rrp_service)]):
+    return service.generate_rrp_graph()
