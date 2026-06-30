@@ -1,8 +1,8 @@
 from fastapi  import FastAPI
 import joblib
 
-from model_manager import ModelManager
-from settings import setting
+from app.model_manager import ModelManager
+from app.settings import setting
 
 app = FastAPI()
     
