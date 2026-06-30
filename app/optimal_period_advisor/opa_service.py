@@ -34,10 +34,8 @@ class OpaService:
         )
         
         new_model = DecisionTreeClassifier(
-            n_estimators=100,
             max_depth=3,
-            random_state=109,
-            class_weight="balanced"
+            random_state=109
         )
         new_model.fit(X_train, y_train)
         
