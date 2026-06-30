@@ -15,8 +15,8 @@ class RrpService:
     def __init__(self, model_manager: ModelManager):
         self.model = model_manager.rrp_model
     
-    def model_learning(self, features, results):
-        dfx = pd.DataFrame([item.model_dump() for item in features])
+    def model_learning(self, featuresList, results):
+        dfx = pd.DataFrame([item.model_dump() for item in featuresList])
         X = dfx.drop("schedule_detail_id", axis=1)
         
         dfy = pd.DataFrame([item.model_dump() for item in results])
@@ -48,8 +48,8 @@ class RrpService:
         # 학습-모델생성, 모델로드 간 충돌 안되도록 할 것.
 
     
-    def predict_reinspection_risk(self, features):
-        df = pd.DataFrame([item.model_dump() for item in features])
+    def predict_reinspection_risk(self, featuresList):
+        df = pd.DataFrame([item.model_dump() for item in featuresList])
         
         # 결과 매칭용 상세일정 식별자 저장
         schedule_detail_ids = df["schedule_detail_id"]

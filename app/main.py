@@ -7,7 +7,8 @@ from settings import setting
 app = FastAPI()
     
 from app.reinspection_risk_prediction.rrp_controller import router as rrp_router
-app.include_router(rrp_router)
+from app.optimal_period_advisor.opa_controller import router as opa_router
+app.include_router(rrp_router, opa_router)
 
 
 rrp_model_path = setting.RRP_MODEL_PATH
