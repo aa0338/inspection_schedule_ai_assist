@@ -15,8 +15,8 @@ app.include_router(rrp_router)
 rrp_model_path = setting.RRP_MODEL_PATH
 opa_model_path = setting.OPA_MODEL_PATH
 model_manager = ModelManager(rrp_model_path, opa_model_path)
-model_manager.load_rrp_model
-# model_manager.load_opa_model
+model_manager.load_rrp_model()
+# model_manager.load_opa_model()
 
 app.state.model_manager = model_manager
 
