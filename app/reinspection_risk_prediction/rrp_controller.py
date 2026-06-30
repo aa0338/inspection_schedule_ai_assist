@@ -12,6 +12,11 @@ router = APIRouter(prefix="/rrp")
 @router.post("/predict")
 def get_reinspection_risk(featuresList: BatchRequest, service: Annotated[RrpService, Depends(get_rrp_service)]):
     return service.predict_reinspection_risk(featuresList)
+
+@router.post("/train")
+def train_reinspection_risk_model(featuresList: BatchRequest, results: list[bool], service: Annotated[RrpService, Depends(get_rrp_service)]):
+    return service.model_learning(featuresList, results)
+
     
 @router.post("/graph")
 def get_rrp_graph(service: Annotated[RrpService, Depends(get_rrp_service)]):
