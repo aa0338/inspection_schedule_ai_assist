@@ -5,6 +5,7 @@ import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import joblib
+from fastapi import Request
 
 from model_manager import ModelManager
 from settings import setting
@@ -15,7 +16,7 @@ class RrpService:
     def __init__(self, model_manager: ModelManager):
         self.model = model_manager.rrp_model
     
-    def model_learning(self, featuresList, results):
+    def model_learning(self, featuresList, results, request: Request):
         dfx = pd.DataFrame([item.model_dump() for item in featuresList])
         X = dfx.drop("schedule_detail_id", axis=1)
         
@@ -43,6 +44,8 @@ class RrpService:
         
         # 모델 저장
         joblib.dump(new_model, rrp_model_path)
+
+        request.state.model_manager.load_rrp_model()
         
         # 학습 후에 모델 교체 로드되도록 할 것.
         # 학습-모델생성, 모델로드 간 충돌 안되도록 할 것.
