@@ -5,7 +5,7 @@ class Features(BaseModel):
     inspection_item_id: int = Field(..., description="점검 항목 식별자")
     past_inspection_count: int = Field(..., ge=0, description="과거 점검 횟수")
     past_fail_count: int = Field(..., ge=0, description="과거 불합격 횟수")
-    past_reinspection_count: int = Field(..., ge="0", description="과거 재점검 횟수")
+    past_reinspection_count: int = Field(..., ge=0, description="과거 재점검 횟수")
     day_after_last_inspection: int|None = Field(None, ge=0, description="최근 점검 후 경과일")
     day_after_last_reinspection: int|None = Field(None, ge=0, description="최근 재점검 후 경과일")
     month: int = Field(..., ge=1, le=12, description="월")
