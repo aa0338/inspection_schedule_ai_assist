@@ -10,5 +10,5 @@ def get_model_manager(request: Request) -> ModelManager:
 def get_rrp_service(model_manager: Annotated[ModelManager, Depends(get_model_manager)]) -> RrpService:
     return RrpService(model_manager)
 
-def get_opa_service(model_manager: Annotated[ModelManager, Depends(get_model_manager)]) -> OpaService:
-    return OpaService(model_manager)
+# def get_opa_service(model_manager: Annotated[ModelManager, Depends(get_model_manager)]) -> OpaService:
+#     return OpaService(model_manager)
