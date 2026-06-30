@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Request, Depends
 from app.reinspection_risk_prediction.rrp_service import RrpService
-from optimal_period_advisor.opa_service import OpaService
+# from app.optimal_period_advisor.opa_service import OpaService
 from app.model_manager import ModelManager
 
 def get_model_manager(request: Request) -> ModelManager:
