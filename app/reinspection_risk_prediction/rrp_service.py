@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 import joblib
 from fastapi import Request
 
-from model_manager import ModelManager
-from settings import setting
+from app.model_manager import ModelManager
+from app.settings import setting
 
 rrp_model_path = setting.RRP_MODEL_PATH
 
