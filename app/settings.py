@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
 
 env_state = os.getenv("ENV_STATE", "dev")   # env.dev 로드
