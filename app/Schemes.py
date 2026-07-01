@@ -39,3 +39,17 @@ class TrainDataRequest(BaseModel):
 class TrainDataBatchRequest(BaseModel):
     items: list[TrainDataRequest]
     first: bool = False
+
+class AccumulateDataResponse(BaseModel):
+    success: bool
+    recieved_count: int
+    message: str
+
+class TrainResponse(BaseModel):
+    success: bool
+    message: str
+
+class PredictResponse(BaseModel):    
+    schedule_detail_id: int
+    reinspection_probability: float
+    reinspection_risk: str
