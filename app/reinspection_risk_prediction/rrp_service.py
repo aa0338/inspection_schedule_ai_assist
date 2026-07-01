@@ -1,27 +1,60 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import joblib
 from fastapi import Request
+from pathlib import Path
 
 from app.model_manager import ModelManager
 from app.settings import setting
+from app.Schemes import PredictBatchRequest, TrainDataBatchRequest
 
-rrp_model_path = setting.RRP_MODEL_PATH
+rrp_model_path = Path(setting.RRP_MODEL_PATH)
+rrp_train_data_path = Path(setting.RRP_TRAIN_DATA_PATH)
 
 class RrpService:
     def __init__(self, model_manager: ModelManager):
         self.model = model_manager.rrp_model
-    
-    def model_learning(self, featuresList, results, request: Request):
-        dfx = pd.DataFrame([item.model_dump() for item in featuresList])
-        X = dfx.drop("schedule_detail_id", axis=1)
+
+    def accumulate_data(partial_train_data: TrainDataBatchRequest):
+        rrp_train_data_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if (partial_train_data.first):
+            rrp_train_data_path.parent.mkdir
+
+        df = pd.DataFrame([item.model_dump() for item in partial_train_data])
+        df.to_csv(
+            rrp_train_data_path,
+            mode="a",
+            header=partial_train_data.first,
+            index=False,
+            encoding="utf-8"
+        )
+
+        return {
+            "success": True,
+            "recieved_count": len(df),
+            "message": "학습 데이터 누적 완료"
+        }
         
-        dfy = pd.DataFrame([item.model_dump() for item in results])
-        y = dfy["result_reinspected"]
+
+    def model_learning(self, request: Request):
+        if(not rrp_train_data_path.exists()):
+            return {
+                "success": False,
+                "message": "누적된 학습 데이터가 없습니다."
+            }
+
+        df = pd.read_csv("rrp_train_data_path")
+        if(len(df) < 30):
+            return {
+                "success": False,
+                "message": f"최소 30개 이상의 학습 데이터가 필요합니다. 현재 {len(df)}개 입니다."
+            }
+
+        X = df.drop("schedule_detail_id", axis=1)
+        
+        y = df["result_reinspected"]
         
         # 결측치 처리
         X["day_after_last_inspection"] = X["day_after_last_inspection"].fillna(9999)
@@ -46,18 +79,25 @@ class RrpService:
         joblib.dump(new_model, rrp_model_path)
 
         request.state.model_manager.load_rrp_model()
+
+        return {
+            "success": True,
+            "message": "학습 성공. 재점검 발생 위험도 예측 모델 생성 완료"
+        }
         
         # 학습 후에 모델 교체 로드되도록 할 것.
         # 학습-모델생성, 모델로드 간 충돌 안되도록 할 것.
 
     
-    def predict_reinspection_risk(self, featuresList):
+    def predict_reinspection_risk(self, featuresList: PredictBatchRequest):
         df = pd.DataFrame([item.model_dump() for item in featuresList])
         
         # 결과 매칭용 상세일정 식별자 저장
         schedule_detail_ids = df["schedule_detail_id"]
         
         # 모델에 필요없는 컬럼 제거
+        if ("result_reinspected" in df.columns):
+            df = df.drop("result_reinspected", axis=1)
         X = df.drop("schedule_detail_id", axis=1)
         
         # 결측치 처리
@@ -91,7 +131,3 @@ class RrpService:
         return {
             "results": results
         }
-    
-    def generate_rrp_graph(self):
-        pass
-    
