@@ -28,7 +28,5 @@ app.include_router(rrp_router)
 @app.get("/")
 def home():
     return {
-        "name" : "inspection_schedule_ai_assist",
-        "rrp_model" : app.state.model_manager.rrp_model,
-        "rrp_model_load" : model_manager.load_rrp_model()
+        "name" : "inspection_schedule_ai_assist"
     }
